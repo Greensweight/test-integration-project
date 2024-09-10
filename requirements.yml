@@ -1,0 +1,4 @@
+---
+collections:
+  - name: ./aura/test
+    type: dir

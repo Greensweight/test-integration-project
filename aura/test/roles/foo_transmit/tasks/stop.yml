@@ -1,0 +1,8 @@
+# ------------------------------------------------------------------------------
+# stop.yml
+#
+# Stop the foo-transmit service.
+# ------------------------------------------------------------------------------
+---
+# Code redacted, assume there are no variables required to use this task. Simply
+# call the task without any variables.

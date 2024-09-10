@@ -1,0 +1,26 @@
+# ------------------------------------------------------------------------------
+# start.yml
+#
+# Start the foo-receive service.
+# ------------------------------------------------------------------------------
+---
+- name: Verify Spec
+  ansible.builtin.validate_argument_spec:
+    argument_spec:
+      required_data:
+        log_dir:
+          description: Logging directory
+          type: str
+          required: true
+
+- ansible.builtin.debug:
+    msg: '"Starting foo-receive service with logs in {{ log_dir }}"'
+
+- name: Clear Logs
+  ansible.builtin.file:
+    path: "{{ log_dir }}"
+    state: absent
+
+- name: Start Service
+  ansible.builtin.command:
+    cmd: service foo-receive start

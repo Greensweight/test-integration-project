@@ -1,0 +1,21 @@
+# ------------------------------------------------------------------------------
+# This file contains one possible part of the technical interview.
+#
+# The purpose of this test case is to launch the foo-receive and foo-transmit
+# services on the appropriate nodes, wait for execution to complete, stop the
+# services, gather results of the test, and finally, parse the results of the
+# test to determine if the run was successful or not.
+#
+# Your goal in this portion of the technical interview is to utilize the
+# provided ansible collection "aura.test" to add tasks to this playbook,
+# accomplishing the goals outlined above. For the sake of this task, assume
+# that all other dependent functions are available and work as expected
+# (even if you were not asked to implement some of the other roles / plugs
+# as a part of your interview).
+# ------------------------------------------------------------------------------
+---
+# TODO: Implement the test case
+- name: Hello World
+  hosts: localhost
+  tasks:
+    - debug: msg="Hello World"
