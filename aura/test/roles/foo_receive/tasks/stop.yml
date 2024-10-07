@@ -5,5 +5,6 @@
 # ------------------------------------------------------------------------------
 ---
 # TODO: Implement the stop.yml task file.
-- ansible.builtin.debug:
-      msg: '"Stopping foo-receive service"'
+- name: Stop foo-receive service
+  ansible.builtin.command:
+      cmd: service foo-receive stop

@@ -15,7 +15,98 @@
 # ------------------------------------------------------------------------------
 ---
 # TODO: Implement the test case
-- name: Hello World
-  hosts: localhost
+---
+- name: Test Case 1 - Multicast Test
+  hosts: all
+  gather_facts: false
+  become: true
+
   tasks:
-    - debug: msg="Hello World"
+    - name: Start foo-receive on Client 1
+      include_role:
+        name: foo_receive
+      vars:
+        task: start
+      delegate_to: client_1
+
+    - name: Start foo-receive on Client 2
+      include_role:
+        name: foo_receive
+      vars:
+        task: start
+      delegate_to: client_2
+
+    - name: Start foo-transmit on Server
+      include_role:
+        name: foo_transmit
+      vars:
+        task: start
+      delegate_to: server
+
+    - name: Wait for foo-transmit to finish
+      pause:
+        minutes: 1  # Assuming the service runs for a short duration
+
+    - name: Stop foo-receive on Client 1
+      include_role:
+        name: foo_receive
+      vars:
+        task: stop
+      delegate_to: client_1
+
+    - name: Stop foo-receive on Client 2
+      include_role:
+        name: foo_receive
+      vars:
+        task: stop
+      delegate_to: client_2
+
+    - name: Stop foo-transmit on Server
+      include_role:
+        name: foo_transmit
+      vars:
+        task: stop
+      delegate_to: server
+
+    - name: Fetch foo-receive logs from Client 1
+      fetch:
+        src: /var/log/foo-receive.log
+        dest: /tmp/foo-receive-client1.log
+      delegate_to: client_1
+
+    - name: Fetch foo-receive logs from Client 2
+      fetch:
+        src: /var/log/foo-receive.log
+        dest: /tmp/foo-receive-client2.log
+      delegate_to: client_2
+
+    - name: Fetch foo-transmit logs from Server
+      fetch:
+        src: /var/log/foo-transmit.log
+        dest: /tmp/foo-transmit.log
+      delegate_to: server
+
+    - name: Compare logs for Client 1
+      aura.test.plugins.custom_log_comparison:
+        transmit_log: /tmp/foo-transmit.log
+        receive_log: /tmp/foo-receive-client1.log
+      register: client1_result
+
+    - name: Compare logs for Client 2
+      aura.test.plugins.custom_log_comparison:
+        transmit_log: /tmp/foo-transmit.log
+        receive_log: /tmp/foo-receive-client2.log
+      register: client2_result
+
+    - name: Print results for Client 1
+      debug:
+        var: client1_result
+
+    - name: Print results for Client 2
+      debug:
+        var: client2_result
+
+    - name: Fail if any comparisons failed
+      fail:
+        msg: "Log comparison failed for one or more clients"
+      when: client1_result.failed or client2_result.failed
